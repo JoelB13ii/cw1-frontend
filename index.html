@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>After School Classes</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <script src="activities.js"></script> <!-- This file should contain your activities data -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+
+        <header>
+            <h1 v-text="sitename"></h1>
+            <button @click="showCheckout" :disabled="!cartItemCount">
+                {{ cartItemCount }}
+                <span class="fa-solid fa-cart-shopping"></span> Cart
+            </button>
+        </header>
+
+        <div class="search-sort-container">
+            <!-- Search Bar -->
+            <div class="search-bar" v-if="showClasses">
+                <label for="search">Search Classes:</label>
+                <input type="text" id="search" v-model="searchQuery" placeholder="Search for a class...">
+            </div>
+        
+            <!-- Sorting Options -->
+            <div class="sorting-options" v-if="showClasses">
+                <label for="sort-by">Sort by:</label>
+                <select v-model="selectedSort" id="sort-by">
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="availability">Availability</option>
+                    <option value="location">Location</option>
+                </select>
+            </div>
+        </div>
+        
+        <main>
+            <div v-if="showClasses" class="activity-list">
+                <div v-for="activity in filteredActivities" :key="activity.id" class="activity-item">
+                    <figure>
+                        <img v-bind:src="'http://localhost:5000/static/'+ activity.image" alt="Activity Image">
+                    </figure>
+                    <h2 v-text="activity.title"></h2>
+                    <p v-html="activity.description"></p>
+                    <p class="price">Price: {{ activity.price }}</p>
+                    <p class="location">Location: {{ activity.location }}</p>
+                    <button v-on:click='addToCart(activity)' v-if='canAddToCart(activity)'>Add to cart</button>
+                    <button disabled='disabled' v-else>Sold Out</button>
+                    <span class="availability" v-if='activity.availableInventory === cartCount(activity.id)'>All out!</span>
+                    <span class="availability" v-else-if="activity.availableInventory - cartCount(activity.id) < 5">
+                        Only {{ activity.availableInventory - cartCount(activity.id) }} left!
+                    </span>
+                    <span class="availability" v-else>Available!</span>
+
+                    <div class="rating">
+                        <span v-for='n in activity.rating'>★</span>
+                        <span v-for='n in 5 - activity.rating'>☆</span>
+                    </div>
+                </div>
+            </div>
+
+            <div v-else>
+
+                
+                <h2>Checkout</h2>
+
+                <div v-if="cart.length > 0" class="cart-summary">
+                    <h3>Your Cart</h3>
+                    <div v-for="activity in cartActivities" :key="activity.id" class="cart-item">
+                        <img :src= "'http://localhost:5000/static/'+ activity.image" alt="Activity Image" class="cart-item-image">
+                        <div class="cart-item-details">
+                            <h4>{{ activity.title }}</h4>
+                            <p>Price: ${{ activity.price }}</p>
+                            <p>Location: {{ activity.location }}</p>
+                        </div>
+                        <button @click="removeFromCart(activity.id)" class="remove-item-btn">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </div>
+                    <p class="cart-total">Total: ${{ cartTotal }}</p>
+                </div>
+
+
+                <p><strong>First Name:</strong>
+                    <input v-model="order.firstName" @input="validateName('firstName')" />
+                </p>
+                <p><strong>Last Name:</strong>
+                    <input v-model="order.lastName" @input="validateName('lastName')" />
+                </p>
+                <p><strong>Address:</strong>
+                    <input v-model="order.address" />
+                </p>
+                <p><strong>City:</strong>
+                    <input v-model="order.city" />
+                </p>
+               
+                <p><strong>Phone Number:</strong>
+                    <input v-model="order.Number" @input="validateNumber" />
+                </p>
+               
+            
+                <button v-on:click="submitForm" :disabled="!isFormValid">Place Order</button>
+
+
+
+                
+
+                <h2>Order Information</h2>
+                <p>First Name: {{ order.firstName }}</p>
+                <p>Last Name: {{ order.lastName }}</p>
+                <p>Address: {{ order.address }}</p>
+                <p>City: {{ order.city }}</p>
+                <p>Number: {{ order.Number }}</p>
+                
+            </div>
+        </main>
+    </div>
+
+    <script type="text/javascript">
+        let webstore = new Vue({
+            el: '#app',
+            data: {
+                sitename: 'After School Classes',
+                activities: activities,
+                selectedSort: 'price-asc',
+                showClasses: true,
+                searchQuery: '', // New data property for search input
+                order: {
+                    firstName: '',
+                    lastName: '',
+                    address: '',
+                    city: '',
+                    Number: '',
+                    state: '',
+                    method: 'Home',
+                    gift: false
+                },
+                
+                cart: []
+            },
+            methods: {
+                addToCart(activity) {
+                    this.cart.push(activity.id);
+                },
+    
+                showCheckout() {
+                    this.showClasses = !this.showClasses;
+                },
+                submitForm() {
+                    alert('Order Submitted!');
+                },
+                canAddToCart(activity) {
+                    return activity.availableInventory > this.cartCount(activity.id);
+                },
+                cartCount(id) {
+                    return this.cart.filter(item => item === id).length;
+                },
+                validateNumber() {
+                    this.order.Number = this.order.Number.replace(/[^0-9]/g, '');
+                },
+                validateName(field) {
+                    this.order[field] = this.order[field].replace(/[^a-zA-Z\s]/g, '');
+                },
+
+                removeFromCart(activityId) {
+                    // Find the index of the first occurrence of this activity ID
+                    const index = this.cart.findIndex(id => id === activityId);
+                    
+                    // If found, remove it from the cart
+                    if (index !== -1) {
+                        this.cart.splice(index, 1);
+                    }
+                }, //
+
+
+
+                
+
+                
+            },
+
+
+
+
+
+            computed: {
+                cartItemCount() {
+                    return this.cart.length || "";
+                },
+                sortedActivities() {
+                    let sorted = [...this.activities]; // Clone the activities array to sort it
+                    if (this.selectedSort === 'price-asc') {
+                        sorted.sort((a, b) => a.price - b.price);
+                    } else if (this.selectedSort === 'price-desc') {
+                        sorted.sort((a, b) => b.price - a.price);
+                    } else if (this.selectedSort === 'availability') {
+                        sorted.sort((a, b) => b.availableInventory - a.availableInventory);
+                    } else if (this.selectedSort === 'location') {
+                        sorted.sort((a, b) => a.location.localeCompare(b.location));
+                    }
+                    return sorted; // Return sorted activities
+                },
+                filteredActivities() {
+                    return this.sortedActivities.filter(activity => {
+                        return activity.title.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
+                               activity.description.toLowerCase().includes(this.searchQuery.toLowerCase());
+                    });
+                },
+
+
+                isFormValid() {
+        return this.order.firstName && this.order.lastName && this.order.address && 
+                this.order.Number && this.order.method;
+            },
+
+
+
+            cartActivities() {
+                    // Get unique activities in the cart
+                    return this.cart.map(cartItemId => 
+                        this.activities.find(activity => activity.id === cartItemId)
+                    ).filter(activity => activity !== undefined);
+                },
+
+                cartTotal() {
+                    // Calculate total price of items in cart
+                    return this.cartActivities.reduce((total, activity) => total + activity.price, 0);
+                },
+            
+        }
+                
+          
+
+
+        });
+
+
+    </script>
+</body>
+
+</html>
