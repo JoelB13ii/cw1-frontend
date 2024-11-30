@@ -178,6 +178,52 @@
                     }
                 }, 
 
+                submitForm() {
+                    // Prepare the order data
+                    const orderData = {
+                        firstName: this.order.firstName,
+                        lastName: this.order.lastName,
+                        address: this.order.address,
+                        city: this.order.city,
+                        phoneNumber: this.order.Number,
+                        cartItems: this.cartActivities.map(activity => ({
+                        id: activity.id,
+                        title: activity.title,
+                        price: activity.price,
+                        quantity: this.cartCount(activity.id)
+                        })),
+                        totalPrice: this.cartTotal
+                    };
+
+                    // Send order data to the backend
+                    fetch('http://localhost:5000/addOrder', {
+                        method: 'POST',
+                        headers: {
+                        'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(orderData)
+                    })
+                        .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to submit order');
+                        }
+                        return response.json();
+                        })
+                        .then(data => {
+                        alert('Order placed successfully! Order ID: ');
+                        
+                        // Clear the form and cart
+                        this.order = { firstName: '', lastName: '', address: '', city: '', Number: '' };
+                        this.cart = [];
+                        this.showClasses = true; // Redirect back to the class list
+                        })
+                        .catch(error => {
+                        console.error('Error:', error);
+                        alert('Failed to place the order. Please try again.');
+                        });
+                    }
+
+
 
 
 
