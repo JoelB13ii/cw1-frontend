@@ -176,11 +176,73 @@
                     if (index !== -1) {
                         this.cart.splice(index, 1);
                     }
-                }, //
+                }, 
 
+                submitForm() {
+        // Validate input fields (though the button will be disabled if not valid)
+        if (!this.isFormValid) {
+            alert('Please fill in all required fields');
+            return;
+        }
 
+        // Prepare order data
+        const orderData = {
+            firstName: this.order.firstName,
+            lastName: this.order.lastName,
+            address: this.order.address,
+            city: this.order.city,
+            phoneNumber: this.order.phoneNumber,
+            cartItems: this.cart.map(id => this.activities.find(activity => activity.id === id)),
+            totalPrice: parseFloat(this.cartTotal)
+        };
 
-                
+        // Log the order data for debugging
+        console.log('Submitting order:', orderData);
+
+        // Use fetch to send the order to the backend
+        fetch('http://localhost:5000/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        })
+        .then(response => {
+            // Log the response status for debugging
+            console.log('Response status:', response.status);
+            
+            // Check if the response is successful
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+            // Parse the JSON response
+            return response.json();
+        })
+        .then(data => {
+            // Log the response data
+            console.log('Order submission response:', data);
+            
+            // Show success message
+            alert(`Order placed successfully! Order ID: ${data.orderId}`);
+            
+            // Reset the form and cart
+            this.cart = [];
+            this.order = {
+                firstName: '',
+                lastName: '',
+                address: '',
+                city: '',
+                phoneNumber: ''
+            };
+            this.showClasses = true;
+        })
+        .catch(error => {
+            // Log and display any errors
+            console.error('Error submitting order:', error);
+            alert('Failed to place order. Please try again.');
+        });
+    }
 
                 
             },
