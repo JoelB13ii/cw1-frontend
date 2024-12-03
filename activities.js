@@ -26,7 +26,7 @@ const activities = [
         price: 150,
         image: "coding.jpeg",
         availableInventory: 5,
-        rating: 3,
+        rating: 1,
         location: "Sharjah"
     },
     
@@ -37,7 +37,7 @@ const activities = [
         price: 150,
         image: "outdoor.jpg",
         availableInventory: 5,
-        rating: 3,
+        rating: 2,
         location: "Abu dhabi"
     },
 
@@ -58,7 +58,7 @@ const activities = [
         price: 150,
         image: "cooking.jpg",
         availableInventory: 5,
-        rating: 3,
+        rating: 1,
         location: "JVC"
     },
 
@@ -69,7 +69,7 @@ const activities = [
         price: 150,
         image: "chess.jpeg",
         availableInventory: 6,
-        rating: 3,
+        rating: 5,
         location: "DSF"
     },
 
@@ -80,7 +80,7 @@ const activities = [
         price: 60,
         image: "marts.jpeg",
         availableInventory: 5,
-        rating: 3,
+        rating: 5,
         location: "Marina"
         
     },
@@ -92,7 +92,7 @@ const activities = [
         price: 10,
         image: "garden.jpeg",
         availableInventory: 5,
-        rating: 3,
+        rating: 2,
         location: "Warqa"
     },
 
@@ -114,7 +114,7 @@ const activities = [
         price: 120,
         image: "book.jpg",
         availableInventory: 5,
-        rating: 3,
+        rating: 4,
         location: "Bur Dubai"
     },
 
@@ -125,7 +125,7 @@ const activities = [
         price: 130,
         image: "sports.jpg",
         availableInventory: 5,
-        rating: 3,
+        rating: 4,
         location: " Barsha"
     }
 ];
