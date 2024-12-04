@@ -151,7 +151,7 @@ main {
     outline: none;
 }
 
-/* Activity List */
+/* Activity List styling */
 .activity-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
