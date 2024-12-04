@@ -4,34 +4,35 @@
 <head>
     <meta charset="UTF-8">
     <title>After School Classes</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <script src="activities.js"></script> <!-- This file should contain your activities data -->
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script> <!-- Imports Vue.js for dynamic content handling -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"> <!--  Font Awesome icons  -->
+    <script src="activities.js"></script> <!--  contain your activities/lessons data -->
+    <link rel="stylesheet" href="style.css"> <!-- Linked CSS -->
 </head>
 
 <body>
-    <div id="app">
+    <div id="app"> <!-- Main container for the Vue.js app -->
 
         <header>
             <h1 v-text="sitename"></h1>
-            <button @click="showCheckout" :disabled="!cartItemCount">
+            <button @click="showCheckout" :disabled="!cartItemCount"> <!-- Button to show checkout, disabled if no items in cart -->
                 {{ cartItemCount }}
-                <span class="fa-solid fa-cart-shopping"></span> Cart
+                <span class="fa-solid fa-cart-shopping"></span> Cart <!-- Cart icon from Font Awesome -->
             </button>
         </header>
 
-        <div class="search-sort-container">
+        <div class="search-sort-container">  <!-- Container for the search and sorting options -->
+
             <!-- Search Bar -->
-            <div class="search-bar" v-if="showClasses">
+            <div class="search-bar" v-if="showClasses"> <!-- Search bar is displayed if 'showClasses' is true -->
                 <label for="search">Search Classes:</label>
-                <input type="text" id="search" v-model="searchQuery" placeholder="Search for a class...">
+                <input type="text" id="search" v-model="searchQuery" placeholder="Search for a class..."> <!--  field bound to 'searchQuery' -->
             </div>
         
-            <!-- Sorting Options -->
-            <div class="sorting-options" v-if="showClasses">
+            <!-- Sorting Div -->
+            <div class="sorting-options" v-if="showClasses"> <!-- Sorting options are displayed if 'showClasses' is true -->
                 <label for="sort-by">Sort by:</label>
-                <select v-model="selectedSort" id="sort-by">
+                <select v-model="selectedSort" id="sort-by"> <!-- Dropdown menu bound to 'selectedSort' for sorting -->
                     <option value="price-asc">Price: Low to High</option>
                     <option value="price-desc">Price: High to Low</option>
                     <option value="availability">Availability</option>
@@ -41,54 +42,54 @@
         </div>
         
         <main>
-            <div v-if="showClasses" class="activity-list">
+            <div v-if="showClasses" class="activity-list"> <!-- Displays the activity list if 'showClasses' is true -->
                 <div v-for="activity in filteredActivities" :key="activity.id" class="activity-item">
                     <figure>
-                        <img v-bind:src="'http://localhost:5000/static/'+ activity.image" alt="Activity Image">
+                        <img v-bind:src="'http://localhost:5000/static/'+ activity.image" alt="Activity Image">  <!-- Bind image source dynamically based on activity -->
                     </figure>
                     <h2 v-text="activity.title"></h2>
                     <p v-html="activity.description"></p>
                     <p class="price">Price: {{ activity.price }}</p>
                     <p class="location">Location: {{ activity.location }}</p>
                     <button v-on:click='addToCart(activity)' v-if='canAddToCart(activity)'>Add to cart</button>
-                    <button disabled='disabled' v-else>Sold Out</button>
-                    <span class="availability" v-if='activity.availableInventory === cartCount(activity.id)'>All out!</span>
-                    <span class="availability" v-else-if="activity.availableInventory - cartCount(activity.id) < 5">
-                        Only {{ activity.availableInventory - cartCount(activity.id) }} left!
+                    <button disabled='disabled' v-else>Sold Out</button> <!-- Show 'Sold Out' if the activity can't be added -->
+                    <span class="availability" v-if='activity.availableInventory === cartCount(activity.id)'>All out!</span> <!-- Show 'All out!' if no inventory left -->
+                    <span class="availability" v-else-if="activity.availableInventory - cartCount(activity.id) < 5"> <!-- Show remaining stock if it's less than 5 -->
+                        Only {{ activity.availableInventory - cartCount(activity.id) }} left! 
                     </span>
                     <span class="availability" v-else>Available!</span>
 
                     <div class="rating">
-                        <span v-for='n in activity.rating'>★</span>
+                        <span v-for='n in activity.rating'>★</span> <!-- Font awesome Star Icon -->
                         <span v-for='n in 5 - activity.rating'>☆</span>
                     </div>
                 </div>
             </div>
 
-            <div v-else>
+            <div v-else>  <!-- Displays the activity list if 'showClasses' is False -->
 
                 
                 <h2>Checkout</h2>
 
-                <div v-if="cart.length > 0" class="cart-summary">
+                <div v-if="cart.length > 0" class="cart-summary"> <!-- Shows cart summary only if there are items in the cart -->
                     <h3>Your Cart</h3>
                     <div v-for="activity in cartActivities" :key="activity.id" class="cart-item">
-                        <img :src= "'http://localhost:5000/static/'+ activity.image" alt="Activity Image" class="cart-item-image">
+                        <img :src= "'http://localhost:5000/static/'+ activity.image" alt="Activity Image" class="cart-item-image">  <!-- Show activity image in cart -->
                         <div class="cart-item-details">
                             <h4>{{ activity.title }}</h4>
                             <p>Price: ${{ activity.price }}</p>
                             <p>Location: {{ activity.location }}</p>
                         </div>
-                        <button @click="removeFromCart(activity.id)" class="remove-item-btn">
+                        <button @click="removeFromCart(activity.id)" class="remove-item-btn">  <!-- Button to remove item from cart -->
                             <i class="fas fa-trash"></i> Remove
                         </button>
                     </div>
-                    <p class="cart-total">Total: ${{ cartTotal }}</p>
+                    <p class="cart-total">Total: ${{ cartTotal }}</p>  <!-- Display total price of items in the cart, in computed properties -->
                 </div>
 
 
-                <p><strong>First Name:</strong>
-                    <input v-model="order.firstName" @input="validateName('firstName')" />
+                <p><strong>First Name:</strong> <!-- Label for first name input field -->
+                    <input v-model="order.firstName" @input="validateName('firstName')" /> <!-- Input for first name with validation -->
                 </p>
                 <p><strong>Last Name:</strong>
                     <input v-model="order.lastName" @input="validateName('lastName')" />
@@ -105,13 +106,13 @@
                 </p>
                
             
-                <button v-on:click="submitForm" :disabled="!isFormValid">Place Order</button>
+                <button v-on:click="submitForm" :disabled="!isFormValid">Place Order</button> <!-- Button to submit the form, disabled if form is not valid -->
 
 
 
                 
 
-                <h2>Order Information</h2>
+                <h2>Order Information</h2>  <!-- Heading for order information section after checkout -->
                 <p>First Name: {{ order.firstName }}</p>
                 <p>Last Name: {{ order.lastName }}</p>
                 <p>Address: {{ order.address }}</p>
@@ -123,52 +124,50 @@
     </div>
 
     <script type="text/javascript">
-        let webstore = new Vue({
+        let webstore = new Vue({ // Creating a new Vue instance for the webstore app
             el: '#app',
-            data: {
+            data: {   // Data properties for the Vue instance
                 sitename: 'After School Classes',
-                activities: activities,
+                activities: activities, // Array of activities, imported from activities.js
                 selectedSort: 'price-asc',
-                showClasses: true,
-                searchQuery: '', // New data property for search input
-                order: {
+                showClasses: true, // Boolean to toggle between showing classes and checkout
+                searchQuery: '', // property for search input
+                order: { // Order details object
                     firstName: '',
                     lastName: '',
                     address: '',
                     city: '',
                     Number: '',
                     state: '',
-                    method: 'Home',
-                    gift: false
                 },
                 
-                cart: []
+                cart: [] // array of activities for the card
             },
             methods: {
-                addToCart(activity) {
-                    this.cart.push(activity.id);
+                addToCart(activity) {  // Adds the selected activity's ID to the cart array
+                    this.cart.push(activity.id); // Pushes the activity ID to the cart
                 },
     
                 showCheckout() {
-                    this.showClasses = !this.showClasses;
+                    this.showClasses = !this.showClasses; // Toggles between showing classes and the checkout page
                 },
-                submitForm() {
+                submitForm() { // Handles form submission for the order
                     alert('Order Submitted!');
                 },
-                canAddToCart(activity) {
-                    return activity.availableInventory > this.cartCount(activity.id);
+                canAddToCart(activity) { // Checks if the item can be added to the cart
+                    return activity.availableInventory > this.cartCount(activity.id); // Ensures inventory is available
                 },
-                cartCount(id) {
+                cartCount(id) { // Counts how many times an activity ID appears in the cart
                     return this.cart.filter(item => item === id).length;
                 },
-                validateNumber() {
+                validateNumber() { 
                     this.order.Number = this.order.Number.replace(/[^0-9]/g, '');
                 },
                 validateName(field) {
                     this.order[field] = this.order[field].replace(/[^a-zA-Z\s]/g, '');
                 },
 
-                removeFromCart(activityId) {
+                removeFromCart(activityId) { 
                     // Find the index of the first occurrence of this activity ID
                     const index = this.cart.findIndex(id => id === activityId);
                     
@@ -179,7 +178,7 @@
                 }, 
 
                 submitForm() {
-                    // Prepare the order data
+                    // Handles form submission by preparing order data and sending it to the backend
                     const orderData = {
                         firstName: this.order.firstName,
                         lastName: this.order.lastName,
@@ -195,13 +194,13 @@
                         totalPrice: this.cartTotal
                     };
 
-                    // Send order data to the backend
+                    // // Sends order data to the backend via POST request
                     fetch('http://localhost:5000/addOrder', {
                         method: 'POST',
                         headers: {
                         'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify(orderData)
+                        body: JSON.stringify(orderData)   // Converts the order data to a JSON string
                     })
                         .then(response => {
                         if (!response.ok) {
@@ -254,6 +253,7 @@
                     }
                     return sorted; // Return sorted activities
                 },
+                
                 filteredActivities() {
                     return this.sortedActivities.filter(activity => {
                         return activity.title.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
