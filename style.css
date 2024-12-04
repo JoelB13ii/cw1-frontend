@@ -67,8 +67,8 @@ main {
     display: flex;
     justify-content: center; /* Centers them horizontally */
     align-items: center; /* Centers them vertically */
-    gap: 20px; /* Space between the search bar and dropdown */
-    margin-top: 30px; /* Adds space above the container */
+    gap: 20px; 
+    margin-top: 30px; 
 }
 
 /* Search Bar Styling */
