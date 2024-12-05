@@ -44,7 +44,7 @@
             <div v-if="showClasses" class="activity-list">
                 <div v-for="activity in filteredActivities" :key="activity.id" class="activity-item">
                     <figure>
-                        <img v-bind:src="'http://localhost:5000/static/'+ activity.image" alt="Activity Image">
+                        <img v-bind:src="'https://cw1-backend-r5sb.onrender.com/static/'+ activity.image" alt="Activity Image">
                     </figure>
                     <h2 v-text="activity.title"></h2>
                     <p v-html="activity.description"></p>
@@ -196,7 +196,7 @@
                     };
 
                     // Send order data to the backend
-                    fetch('http://localhost:5000/addOrder', {
+                    fetch('https://cw1-backend-r5sb.onrender.com/addOrder', {
                         method: 'POST',
                         headers: {
                         'Content-Type': 'application/json'
