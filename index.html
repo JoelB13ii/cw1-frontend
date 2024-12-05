@@ -73,7 +73,7 @@
                 <div v-if="cart.length > 0" class="cart-summary">
                     <h3>Your Cart</h3>
                     <div v-for="activity in cartActivities" :key="activity.id" class="cart-item">
-                        <img :src= "'http://localhost:5000/static/'+ activity.image" alt="Activity Image" class="cart-item-image">
+                        <img :src= "'https://cw1-backend-r5sb.onrender.com/static/'+ activity.image" alt="Activity Image" class="cart-item-image">
                         <div class="cart-item-details">
                             <h4>{{ activity.title }}</h4>
                             <p>Price: ${{ activity.price }}</p>
